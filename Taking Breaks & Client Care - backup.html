@@ -104,15 +104,15 @@
         </div>
         
         <!-- Controls -->
-        <div class="flex items-center gap-2 md:gap-4">
-            <span class="hidden md:inline-block text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+        <div class="flex items-center gap-4">
+            <span class="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                 Slide <span id="current-slide-num">1</span> / 40
             </span>
             <button onclick="openSettings()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-colors tooltip" title="Voice Settings">
                 <i class="fas fa-cog text-lg"></i>
             </button>
-            <button onclick="window.print()" class="bg-teal-500 hover:bg-teal-600 text-white px-3 md:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm">
-                <i class="fas fa-file-pdf"></i> <span class="hidden md:inline">Download PDF</span>
+            <button onclick="window.print()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm">
+                <i class="fas fa-file-pdf"></i> Download PDF
             </button>
         </div>
     </header>
@@ -121,10 +121,10 @@
     <main class="flex-grow relative flex justify-center items-center p-4 md:p-8" id="slide-container">
         
         <!-- Navigation Buttons -->
-        <button id="prev-btn" onclick="navigate(-1)" class="nav-btn absolute left-2 md:left-10 z-40 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Previous">
+        <button id="prev-btn" onclick="navigate(-1)" class="nav-btn absolute left-4 md:left-10 z-40 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Previous">
             <i class="fas fa-chevron-left"></i>
         </button>
-        <button id="next-btn" onclick="navigate(1)" class="nav-btn absolute right-2 md:right-10 z-40 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Next">
+        <button id="next-btn" onclick="navigate(1)" class="nav-btn absolute right-4 md:right-10 z-40 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Next">
             <i class="fas fa-chevron-right"></i>
         </button>
 
@@ -453,7 +453,7 @@
             hiddenTargetWords.clear();
             let html = '';
             slidesData.forEach((slide, index) => {
-                html += `<div class="slide-panel w-full h-full p-4 md:p-12 flex-col justify-center overflow-y-auto relative bg-white" id="slide-${index}">`;
+                html += `<div class="slide-panel w-full h-full p-8 md:p-12 flex-col justify-center relative bg-white" id="slide-${index}">`;
                 
                 if (slide.type === 'title') {
                     html += `
@@ -479,7 +479,7 @@
                     html += `
                         <h2 class="text-3xl font-bold text-rose-500 mb-4">${slide.title}</h2>
                         <p class="text-lg text-gray-600 mb-8">${slide.desc}</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-4xl mx-auto">
+                        <div class="grid grid-cols-3 gap-6 w-full max-w-4xl mx-auto">
                             ${slide.images.map(img => `
                                 <div class="aspect-square rounded-2xl overflow-hidden shadow-md border-4 border-rose-50">
                                     <img src="${img}" class="w-full h-full object-cover" alt="Prediction image" loading="lazy">
@@ -514,8 +514,8 @@
                 else if (slide.type === 'breakdown') {
                     const roleColor = slide.role === 'Staff' ? 'teal' : (slide.role === 'Planner' ? 'indigo' : 'rose');
                     html += `
-                        <div class="absolute top-4 left-4 md:top-8 md:left-8 text-xs md:text-sm font-bold text-gray-400">Sentence ${slide.num}</div>
-                        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-8 border-b pb-2 md:pb-4 mt-6 md:mt-0">${slide.title}</h2>
+                        <div class="absolute top-8 left-8 text-sm font-bold text-gray-400">Sentence ${slide.num}</div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-8 border-b pb-4">${slide.title}</h2>
                         
                         <div class="mb-10 p-6 bg-${roleColor}-50 rounded-xl border border-${roleColor}-100 relative">
                             <span class="absolute -top-3 left-6 bg-${roleColor}-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm uppercase">${slide.role}</span>
@@ -524,7 +524,7 @@
                                 ${generateBlankSentence(slide.sentence, slide.blankRatio)}
                             </div>
                             
-                            <div class="flex flex-wrap gap-2 md:gap-3 no-print mt-2">
+                            <div class="flex gap-3 no-print mt-2">
                                 <button class="toggle-btn bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 flex items-center gap-2">
                                     <i class="fas fa-eye"></i> Show Text & IPA
                                 </button>
@@ -754,13 +754,20 @@
 
             const enVoices = availableVoices.filter(v => v.lang.startsWith('en-'));
             
-            const displayList = enVoices;
+            const strictVoices = enVoices.filter(v => 
+                v.name.includes('Emma') || 
+                v.name.includes('Jenny') || 
+                v.name.includes('Andrew') || 
+                v.name.includes('Brian')
+            );
+            
+            const displayList = strictVoices.length > 0 ? strictVoices : enVoices;
 
             const configs = [
-                { id: 'voice-staff', priorities: ['Emma', 'Jenny', 'Samantha', 'Nicky', 'Moira', 'Google US English', 'Female'] },
-                { id: 'voice-manager', priorities: ['Andrew', 'Guy', 'Brian', 'Alex', 'Daniel', 'Aaron', 'Google UK English Male', 'Male'] },
-                { id: 'voice-client', priorities: ['Jenny', 'Emma', 'Karen', 'Tessa', 'Catherine', 'Martha', 'Google UK English Female', 'Female'] },
-                { id: 'voice-planner', priorities: ['Brian Natural', 'Brian', 'Andrew', 'Arthur', 'Gordon', 'Fred', 'Male'] }
+                { id: 'voice-staff', priorities: ['Emma', 'Jenny', 'Female'] },
+                { id: 'voice-manager', priorities: ['Andrew', 'Guy', 'Male', 'Brian'] },
+                { id: 'voice-client', priorities: ['Jenny', 'Emma', 'Female'] },
+                { id: 'voice-planner', priorities: ['Brian Natural', 'Brian', 'Andrew', 'Male'] }
             ];
             
             configs.forEach(config => {

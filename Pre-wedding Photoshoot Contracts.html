@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taking Breaks & Client Care - Xoai Wedding</title>
+    <title>Pre-wedding Photoshoot Contracts - Xoai Wedding</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Icons -->
@@ -89,30 +89,30 @@
         }
     </style>
 </head>
-<body class="bg-blue-50 text-gray-800 h-screen overflow-hidden flex flex-col" id="app-container">
+<body class="bg-rose-50 text-gray-800 h-screen overflow-hidden flex flex-col" id="app-container">
 
     <!-- Toolbar -->
-    <header id="toolbar" class="bg-white shadow-sm px-6 py-3 flex justify-between items-center z-50 shrink-0 border-b border-blue-100">
+    <header id="toolbar" class="bg-white shadow-sm px-6 py-3 flex justify-between items-center z-50 shrink-0 border-b border-rose-100">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold shadow-sm">
+            <div class="w-10 h-10 bg-rose-400 rounded-full flex items-center justify-center text-white font-bold shadow-sm">
                 XW
             </div>
             <div>
                 <h1 class="text-xl font-bold text-gray-800">Xoai Wedding</h1>
-                <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider">English Training (Level A2)</p>
+                <p class="text-xs text-rose-500 font-semibold uppercase tracking-wider">English Training</p>
             </div>
         </div>
         
         <!-- Controls -->
-        <div class="flex items-center gap-2 md:gap-4">
-            <span class="hidden md:inline-block text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+        <div class="flex items-center gap-4">
+            <span class="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                 Slide <span id="current-slide-num">1</span> / 40
             </span>
             <button onclick="openSettings()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-colors tooltip" title="Voice Settings">
                 <i class="fas fa-cog text-lg"></i>
             </button>
-            <button onclick="window.print()" class="bg-teal-500 hover:bg-teal-600 text-white px-3 md:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm">
-                <i class="fas fa-file-pdf"></i> <span class="hidden md:inline">Download PDF</span>
+            <button onclick="window.print()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm">
+                <i class="fas fa-file-pdf"></i> Download PDF
             </button>
         </div>
     </header>
@@ -121,10 +121,10 @@
     <main class="flex-grow relative flex justify-center items-center p-4 md:p-8" id="slide-container">
         
         <!-- Navigation Buttons -->
-        <button id="prev-btn" onclick="navigate(-1)" class="nav-btn absolute left-2 md:left-10 z-40 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Previous">
+        <button id="prev-btn" onclick="navigate(-1)" class="nav-btn absolute left-4 md:left-10 z-40 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-rose-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Previous">
             <i class="fas fa-chevron-left"></i>
         </button>
-        <button id="next-btn" onclick="navigate(1)" class="nav-btn absolute right-2 md:right-10 z-40 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Next">
+        <button id="next-btn" onclick="navigate(1)" class="nav-btn absolute right-4 md:right-10 z-40 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-rose-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Next">
             <i class="fas fa-chevron-right"></i>
         </button>
 
@@ -145,15 +145,11 @@
             </div>
             
             <div class="space-y-4">
-                <p class="text-sm text-gray-600 mb-2">Select AI voices available on your device. Voice speed is set to 0.8x for A2 learners.</p>
+                <p class="text-sm text-gray-600 mb-2">Select AI voices available on your device. Recommended: "Natural" or "Online" voices.</p>
                 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Staff Voice</label>
                     <select id="voice-staff" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"></select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Manager Voice</label>
-                    <select id="voice-manager" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"></select>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Client Voice</label>
@@ -174,221 +170,198 @@
     <!-- JavaScript Data and Logic -->
     <script>
         // --- DIALOGUES ARRAYS ---
-        // Avoid single quotes (e.g. don't, I'm) to prevent TTS bugs as requested
+        // Using ' to escape single quotes so the JS variable doesn't break, and when read by TTS it avoids errors.
         const dialogue1 = [
-            { r: "Staff", t: "Hi, can I take my break now?" },
-            { r: "Manager", t: "Yes, it is your turn. How long is your break?" },
-            { r: "Staff", t: "I have a thirty minute break." },
-            { r: "Manager", t: "Okay. Please tell the client you are leaving." },
-            { r: "Staff", t: "I already told them. They are having coffee now." },
-            { r: "Manager", t: "Good job. Did you ask them if they need anything?" },
-            { r: "Staff", t: "Yes, I did. They said they are fine." },
-            { r: "Manager", t: "Great. Have a good break!" }
+            { r: "Staff", t: "Hello, welcome to Xoai Wedding! Are you ready to sign the contract for your pre-wedding photoshoot?" },
+            { r: "Client", t: "Hi, yes I am! But I have a few small questions about the locations." },
+            { r: "Staff", t: "No problem. We include three locations in the city for this package." },
+            { r: "Client", t: "Can we change one location to a beach outside the city?" },
+            { r: "Staff", t: "Yes, you can. However, there is an extra fee for travel and time." },
+            { r: "Client", t: "How much is the extra fee for the beach?" },
+            { r: "Staff", t: "It is fifty dollars more, and it takes an extra two hours." },
+            { r: "Client", t: "That sounds fair, I agree to pay the extra fee." }
         ];
 
         const dialogue2 = [
-            { r: "Staff", t: "Hello, are you okay with the dress?" },
-            { r: "Client", t: "Yes, it is very beautiful. But I feel a little hot." },
-            { r: "Staff", t: "Do you want some cold water?" },
-            { r: "Client", t: "Yes, please. That would be great." },
-            { r: "Staff", t: "I will get it for you right now." },
-            { r: "Client", t: "Thank you so much. You are very kind." },
-            { r: "Staff", t: "Here is your water. Do you want to sit down?" },
-            { r: "Client", t: "Yes, I will sit down for five minutes." }
+            { r: "Staff", t: "Great! Now, let's look at the cancellation policy in the contract." },
+            { r: "Client", t: "What happens if it rains heavily on our photoshoot day?" },
+            { r: "Staff", t: "If the weather is bad, we will reschedule the shoot for free." },
+            { r: "Client", t: "That's a relief. What if we have to cancel the shoot completely?" },
+            { r: "Staff", t: "If you cancel two weeks before the date, we refund fifty percent of your deposit." },
+            { r: "Client", t: "Will we lose the whole deposit if we cancel very late?" },
+            { r: "Staff", t: "Yes, cancellations within forty-eight hours are strictly non-refundable." },
+            { r: "Client", t: "I understand the terms clearly. Where do I sign the paper?" }
         ];
 
         const monologuePlanner = [
-            { r: "Planner", t: "Taking a break is very important for our staff." },
-            { r: "Planner", t: "When we work all day, we need time to rest." },
-            { r: "Planner", t: "But we must always care for our clients first." },
-            { r: "Planner", t: "Before you take a break, check on your clients." },
-            { r: "Planner", t: "Ask them if they need water or a chair." },
-            { r: "Planner", t: "Make sure they are happy and comfortable." },
-            { r: "Planner", t: "If the client is okay, you can take your break." },
-            { r: "Planner", t: "A happy client makes our job much easier." }
+            { r: "Planner", t: "Explaining a pre-wedding contract clearly is very important for both sides." },
+            { r: "Planner", t: "First, we always list the exact number of edited photos the client will receive." },
+            { r: "Planner", t: "This prevents misunderstandings when we deliver the final wedding album." },
+            { r: "Planner", t: "Next, we must explain the copyright rules carefully to every couple." },
+            { r: "Planner", t: "Xoai Wedding keeps the right to use the photos for our marketing." },
+            { r: "Planner", t: "However, we always ask for the couple's permission before posting online." },
+            { r: "Planner", t: "If clients want completely private photos, they can purchase full copyright." },
+            { r: "Planner", t: "A detailed contract builds trust and makes the photoshoot day much smoother." }
         ];
 
         // --- DATA STRUCTURE ---
         const slidesData = [
-            // Slide 1
-            { type: 'title', title: "Taking Breaks & Client Care", subtitle: "Level: A2", color: 'blue' },
-            // Slide 2
-            { type: 'list', title: "Warm-up Questions", level: "A2", items: [
-                "1. When do you usually take a break at work?",
-                "2. What do you do when you take a break?",
-                "3. How do you check if a client needs help?"
+            // PART 1
+            { type: 'title', title: "Pre-wedding Photoshoot Contracts", subtitle: "Level: A2-B1", color: 'rose' },
+            { type: 'list', title: "Warm up Questions", level: "A2-B1", items: [
+                "1. Have you ever helped a couple sign a photoshoot contract?",
+                "2. Why is it important to have a clear contract?",
+                "3. What are some common questions clients ask before signing?"
             ]},
-            // Slide 3
-            { type: 'prediction', title: "Prediction Activity", desc: "Look at the photos. What are the staff and client doing?", images: [
-                "https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=400&q=80", 
-                "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80", 
-                "https://images.unsplash.com/photo-1498837167922-41c46b21c67e?auto=format&fit=crop&w=400&q=80"  
+            { type: 'prediction', title: "Prediction Activity", desc: "What do you think the client will ask about first?", images: [
+                "https://images.unsplash.com/photo-1542042161784-26ab9e041e89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1596704017254-9b121068fb31?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1600096194534-95cf5ece04cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"  
             ]},
-            // Slide 4
             { type: 'audio-mcq', title: "Listen and Choose", 
               script: dialogue1, 
-              question: "What is the staff asking to do?", options: ["(A) To go home", "(B) To take a break", "(C) To drink coffee", "(D) To help a client"], answer: 1 }, 
+              question: "What is the client asking to change in the package?", options: ["(A) The number of photos", "(B) The photoshoot location", "(C) The payment method", "(D) The photographer"], answer: 1 }, 
             
-            // Slide 5 - 12 (Breakdown dialogue 1)
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 1, role: "Staff", 
-              sentence: "Hi, can I take my break now?", blankRatio: 0.35,
-              ipa: "/haɪ, kæn aɪ teɪk maɪ breɪk naʊ?/", voice: "staff",
-              qType: "Yes/No", qText: "Does the staff want to take a break?", qAns: "Yes, they do.", qIpa: "/jes, ðeɪ duː/" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 2, role: "Manager", 
-              sentence: "Yes, it is your turn. How long is your break?", blankRatio: 0.35,
-              ipa: "/jes, ɪt ɪz jɔːr tɜːrn. haʊ lɔːŋ ɪz jɔːr breɪk?/", voice: "manager",
-              qType: "Wh-", qText: "What does the manager ask?", qAns: "How long is your break?", qIpa: "/haʊ lɔːŋ ɪz jɔːr breɪk?/" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 3, role: "Staff", 
-              sentence: "I have a thirty minute break.", blankRatio: 0.35,
-              ipa: "/aɪ hæv ə ˈθɜːrti ˈmɪnɪt breɪk./", voice: "staff",
-              qType: "Yes/No", qText: "Is the break sixty minutes long?", qAns: "No, it is thirty minutes.", qIpa: "/nəʊ, ɪt ɪz ˈθɜːrti ˈmɪnɪts./" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 4, role: "Manager", 
-              sentence: "Okay. Please tell the client you are leaving.", blankRatio: 0.35,
-              ipa: "/oʊˈkeɪ. pliːz tɛl ðə ˈklaɪənt juː ɑːr ˈliːvɪŋ./", voice: "manager",
-              qType: "Wh-", qText: "Who should the staff tell?", qAns: "The client.", qIpa: "/ðə ˈklaɪənt./" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 5, role: "Staff", 
-              sentence: "I already told them. They are having coffee now.", blankRatio: 0.35,
-              ipa: "/aɪ ɔːlˈrɛdi toʊld ðɛm. ðeɪ ɑːr ˈhævɪŋ ˈkɔːfi naʊ./", voice: "staff",
-              qType: "Wh-", qText: "What are the clients doing?", qAns: "They are having coffee.", qIpa: "/ðeɪ ɑːr ˈhævɪŋ ˈkɔːfi./" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 6, role: "Manager", 
-              sentence: "Good job. Did you ask them if they need anything?", blankRatio: 0.35,
-              ipa: "/gʊd dʒɒb. dɪd juː æsk ðɛm ɪf ðeɪ niːd ˈɛniˌθɪŋ?/", voice: "manager",
-              qType: "Yes/No", qText: "Did the manager say bad job?", qAns: "No, the manager said good job.", qIpa: "/nəʊ, ðə ˈmænɪdʒər sɛd gʊd dʒɒb./" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 7, role: "Staff", 
-              sentence: "Yes, I did. They said they are fine.", blankRatio: 0.35,
-              ipa: "/jɛs, aɪ dɪd. ðeɪ sɛd ðeɪ ɑːr faɪn./", voice: "staff",
-              qType: "Wh-", qText: "How are the clients?", qAns: "They are fine.", qIpa: "/ðeɪ ɑːr faɪn./" },
-            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 8, role: "Manager", 
-              sentence: "Great. Have a good break!", blankRatio: 0.35,
-              ipa: "/greɪt. hæv ə gʊd breɪk!/", voice: "manager",
-              qType: "Wh-", qText: "What does the manager wish?", qAns: "Have a good break.", qIpa: "/hæv ə gʊd breɪk./" },
-            
-            // Slide 13
+            // PART 2: Breakdown 1 (35% blanks)
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 1, role: "Staff", 
+              sentence: "Hello, welcome to Xoai Wedding! Are you ready to sign the contract for your pre-wedding photoshoot?", blankRatio: 0.35,
+              ipa: "/həˈləʊ, ˈwelkəm tuː swaɪ ˈwedɪŋ! ɑːr juː ˈredi tuː saɪn ðə ˈkɑːntrækt fɔːr jʊər priː-ˈwedɪŋ ˈfəʊtəʊʃuːt/", voice: "staff",
+              qType: "Yes/No", qText: "Are they talking about a wedding dress?", qAns: "No, they are talking about a pre-wedding photoshoot contract.", qIpa: "/nəʊ, ðeɪ ɑːr ˈtɔːkɪŋ əˈbaʊt ə priː-ˈwedɪŋ ˈfəʊtəʊʃuːt ˈkɑːntrækt/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 2, role: "Client", 
+              sentence: "Hi, yes I am! But I have a few small questions about the locations.", blankRatio: 0.35,
+              ipa: "/haɪ, jes aɪ æm! bʌt aɪ hæv ə fjuː smɔːl ˈkwestʃənz əˈbaʊt ðə ləʊˈkeɪʃnz/", voice: "client",
+              qType: "Yes/No", qText: "Does the client have questions about the price?", qAns: "No, the client has questions about the locations.", qIpa: "/nəʊ, ðə ˈklaɪənt hæz ˈkwestʃənz əˈbaʊt ðə ləʊˈkeɪʃnz/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 3, role: "Staff", 
+              sentence: "No problem. We include three locations in the city for this package.", blankRatio: 0.35,
+              ipa: "/nəʊ ˈprɑːbləm. wiː ɪnˈkluːd θriː ləʊˈkeɪʃnz ɪn ðə ˈsɪti fɔːr ðɪs ˈpækɪdʒ/", voice: "staff",
+              qType: "Yes/No", qText: "Does the package include two locations?", qAns: "No, it includes three locations.", qIpa: "/nəʊ, ɪt ɪnˈkluːdz θriː ləʊˈkeɪʃnz/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 4, role: "Client", 
+              sentence: "Can we change one location to a beach outside the city?", blankRatio: 0.35,
+              ipa: "/kæn wiː tʃeɪndʒ wʌn ləʊˈkeɪʃn tuː ə biːtʃ ˌaʊtˈsaɪd ðə ˈsɪti/", voice: "client",
+              qType: "Yes/No", qText: "Does the client want to go to a museum?", qAns: "No, they want to go to a beach outside the city.", qIpa: "/nəʊ, ðeɪ wɑːnt tuː ɡəʊ tuː ə biːtʃ ˌaʊtˈsaɪd ðə ˈsɪti/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 5, role: "Staff", 
+              sentence: "Yes, you can. However, there is an extra fee for travel and time.", blankRatio: 0.35,
+              ipa: "/jes, juː kæn. haʊˈevər, ðer ɪz ən ˈekstrə fiː fɔːr ˈtrævl ænd taɪm/", voice: "staff",
+              qType: "Wh-", qText: "Why is there an extra fee?", qAns: "Because of travel and time.", qIpa: "/bɪˈkʌz ʌv ˈtrævl ænd taɪm/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 6, role: "Client", 
+              sentence: "How much is the extra fee for the beach?", blankRatio: 0.35,
+              ipa: "/haʊ mʌtʃ ɪz ði ˈekstrə fiː fɔːr ðə biːtʃ/", voice: "client",
+              qType: "Wh-", qText: "What is the client asking about?", qAns: "The extra fee for the beach.", qIpa: "/ði ˈekstrə fiː fɔːr ðə biːtʃ/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 7, role: "Staff", 
+              sentence: "It is fifty dollars more, and it takes an extra two hours.", blankRatio: 0.35,
+              ipa: "/ɪt ɪz ˈfɪfti ˈdɑːlərz mɔːr, ænd ɪt teɪks ən ˈekstrə tuː aʊərz/", voice: "staff",
+              qType: "Wh-", qText: "How much is the extra fee?", qAns: "It is fifty dollars more.", qIpa: "/ɪt ɪz ˈfɪfti ˈdɑːlərz mɔːr/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown (A2)", num: 8, role: "Client", 
+              sentence: "That sounds fair, I agree to pay the extra fee.", blankRatio: 0.35,
+              ipa: "/ðæt saʊndz fer, aɪ əˈɡriː tuː peɪ ði ˈekstrə fiː/", voice: "client",
+              qType: "Wh-", qText: "What does the client agree to do?", qAns: "To pay the extra fee.", qIpa: "/tuː peɪ ði ˈekstrə fiː/" },
             { type: 'full-script', title: "Conversation 1: Script", script: dialogue1 },
-            
-            // Slide 14
-            { type: 'speaking', title: "Speaking Activity", icon: "comments", text: "Tell me about a time you took a break at work. What did you do before you left?" },
+            { type: 'speaking', title: "Speaking Activity", icon: "comments", text: "Tell me about a time a client wanted to change their photoshoot location at Xoai Wedding. How did you handle it?" },
 
-            // Slide 15
-            { type: 'prediction', title: "Part 2: Conversation 2 - Prediction", desc: "Look at the photos. What does the client need?", images: [
-                "https://images.unsplash.com/photo-1544465544-1b71aee9dfa3?auto=format&fit=crop&w=400&q=80", 
-                "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=400&q=80", 
-                "https://images.unsplash.com/photo-1555529902-5261145633bf?auto=format&fit=crop&w=400&q=80"  
+            // PART 3
+            { type: 'prediction', title: "Part 3: Conversation 2 (B1) - Prediction", desc: "What policy do you think they will discuss next?", images: [
+                "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1515150144380-bca9f1650ed9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1554284126-aa88f22d8b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"  
             ]},
-            
-            // Slide 16
             { type: 'audio-mcq', title: "Listen and Choose", 
               script: dialogue2,
-              question: "What does the staff offer to the client?", options: ["(A) A new dress", "(B) Some cold water", "(C) A hot coffee", "(D) A new location"], answer: 1 },
+              question: "What happens if the client cancels within 48 hours?", options: ["(A) They get a full refund", "(B) They can reschedule", "(C) They get a 50% refund", "(D) They do not get a refund"], answer: 3 },
             
-            // Slide 17 - 24 (Breakdown dialogue 2)
+            // PART 3: Breakdown 2 (35% blanks)
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 1, role: "Staff", 
-              sentence: "Hello, are you okay with the dress?", blankRatio: 0.35,
-              ipa: "/hɛˈloʊ, ɑːr juː oʊˈkeɪ wɪð ðə drɛs?/", voice: "staff",
-              qType: "Yes/No", qText: "Is the staff asking about the shoes?", qAns: "No, they are asking about the dress.", qIpa: "/nəʊ, ðeɪ ɑːr ˈæskɪŋ əˈbaʊt ðə drɛs./" },
+              sentence: "Great! Now, let's look at the cancellation policy in the contract.", blankRatio: 0.35,
+              ipa: "/ɡreɪt! naʊ, lets lʊk æt ðə ˌkænsəˈleɪʃn ˈpɑːləsi ɪn ðə ˈkɑːntrækt/", voice: "staff",
+              qType: "Yes/No", qText: "Are they looking at the cancellation policy?", qAns: "Yes, they are.", qIpa: "/jes, ðeɪ ɑːr/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 2, role: "Client", 
-              sentence: "Yes, it is very beautiful. But I feel a little hot.", blankRatio: 0.35,
-              ipa: "/jɛs, ɪt ɪz ˈvɛri ˈbjuːtəfəl. bʌt aɪ fiːl ə ˈlɪtəl hɒt./", voice: "client",
-              qType: "Wh-", qText: "How does the client feel?", qAns: "The client feels a little hot.", qIpa: "/ðə ˈklaɪənt fiːlz ə ˈlɪtəl hɒt./" },
+              sentence: "What happens if it rains heavily on our photoshoot day?", blankRatio: 0.35,
+              ipa: "/hwʌt ˈhæpənz ɪf ɪt reɪnz ˈhevɪli ɑːn aʊər ˈfəʊtəʊʃuːt deɪ/", voice: "client",
+              qType: "Yes/No", qText: "Is the client worried about snow?", qAns: "No, they are worried about heavy rain.", qIpa: "/nəʊ, ðeɪ ɑːr ˈwɜːrɪd əˈbaʊt ˈhevi reɪn/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 3, role: "Staff", 
-              sentence: "Do you want some cold water?", blankRatio: 0.35,
-              ipa: "/duː juː wɒnt sʌm koʊld ˈwɔːtər?/", voice: "staff",
-              qType: "Yes/No", qText: "Does the staff offer warm water?", qAns: "No, the staff offers cold water.", qIpa: "/nəʊ, ðə stæf ˈɔfərz koʊld ˈwɔːtər./" },
+              sentence: "If the weather is bad, we will reschedule the shoot for free.", blankRatio: 0.35,
+              ipa: "/ɪf ðə ˈweðər ɪz bæd, wiː wɪl ˌriːˈskedʒuːl ðə ʃuːt fɔːr friː/", voice: "staff",
+              qType: "Yes/No", qText: "Do they charge a fee for rescheduling because of bad weather?", qAns: "No, they reschedule for free.", qIpa: "/nəʊ, ðeɪ ˌriːˈskedʒuːl fɔːr friː/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 4, role: "Client", 
-              sentence: "Yes, please. That would be great.", blankRatio: 0.35,
-              ipa: "/jɛs, pliːz. ðæt wʊd bi greɪt./", voice: "client",
-              qType: "Yes/No", qText: "Does the client say no?", qAns: "No, the client says yes.", qIpa: "/nəʊ, ðə ˈklaɪənt sɛz jɛs./" },
+              sentence: "That's a relief. What if we have to cancel the shoot completely?", blankRatio: 0.35,
+              ipa: "/ðæts ə rɪˈliːf. hwʌt ɪf wiː hæv tuː ˈkænsl ðə ʃuːt kəmˈpliːtli/", voice: "client",
+              qType: "Yes/No", qText: "Does the client want to change the location?", qAns: "No, the client is asking about canceling the shoot completely.", qIpa: "/nəʊ, ðə ˈklaɪənt ɪz ˈæskɪŋ əˈbaʊt ˈkænslɪŋ ðə ʃuːt kəmˈpliːtli/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 5, role: "Staff", 
-              sentence: "I will get it for you right now.", blankRatio: 0.35,
-              ipa: "/aɪ wɪl gɛt ɪt fɔːr juː raɪt naʊ./", voice: "staff",
-              qType: "Wh-", qText: "When will the staff get it?", qAns: "Right now.", qIpa: "/raɪt naʊ./" },
+              sentence: "If you cancel two weeks before the date, we refund fifty percent of your deposit.", blankRatio: 0.35,
+              ipa: "/ɪf juː ˈkænsl tuː wiːks bɪˈfɔːr ðə deɪt, wiː rɪˈfʌnd ˈfɪfti pərˈsent ʌv jʊər dɪˈpɑːzɪt/", voice: "staff",
+              qType: "Wh-", qText: "How much do they refund if canceled two weeks before?", qAns: "Fifty percent of the deposit.", qIpa: "/ˈfɪfti pərˈsent ʌv ðə dɪˈpɑːzɪt/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 6, role: "Client", 
-              sentence: "Thank you so much. You are very kind.", blankRatio: 0.35,
-              ipa: "/θæŋk juː soʊ mʌtʃ. juː ɑːr ˈvɛri kaɪnd./", voice: "client",
-              qType: "Wh-", qText: "What does the client say?", qAns: "Thank you so much.", qIpa: "/θæŋk juː soʊ mʌtʃ./" },
+              sentence: "Will we lose the whole deposit if we cancel very late?", blankRatio: 0.35,
+              ipa: "/wɪl wiː luːz ðə həʊl dɪˈpɑːzɪt ɪf wiː ˈkænsl ˈveri leɪt/", voice: "client",
+              qType: "Wh-", qText: "What is the client afraid to lose?", qAns: "The whole deposit.", qIpa: "/ðə həʊl dɪˈpɑːzɪt/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 7, role: "Staff", 
-              sentence: "Here is your water. Do you want to sit down?", blankRatio: 0.35,
-              ipa: "/hɪər ɪz jɔːr ˈwɔːtər. duː juː wɒnt tuː sɪt daʊn?/", voice: "staff",
-              qType: "Wh-", qText: "What does the staff ask?", qAns: "Do you want to sit down?", qIpa: "/duː juː wɒnt tuː sɪt daʊn?/" },
+              sentence: "Yes, cancellations within forty-eight hours are strictly non-refundable.", blankRatio: 0.35,
+              ipa: "/jes, ˌkænsəˈleɪʃnz wɪˈðɪn ˈfɔːrti eɪt aʊərz ɑːr ˈstrɪktli nɑːn rɪˈfʌndəbl/", voice: "staff",
+              qType: "Wh-", qText: "When are cancellations non-refundable?", qAns: "Within forty-eight hours.", qIpa: "/wɪˈðɪn ˈfɔːrti eɪt aʊərz/" },
             { type: 'breakdown', title: "Conversation 2 Breakdown", num: 8, role: "Client", 
-              sentence: "Yes, I will sit down for five minutes.", blankRatio: 0.35,
-              ipa: "/jɛs, aɪ wɪl sɪt daʊn fɔːr faɪv ˈmɪnɪts./", voice: "client",
-              qType: "Wh-", qText: "How long will the client sit down?", qAns: "For five minutes.", qIpa: "/fɔːr faɪv ˈmɪnɪts./" },
-            
-            // Slide 25
+              sentence: "I understand the terms clearly. Where do I sign the paper?", blankRatio: 0.35,
+              ipa: "/aɪ ˌʌndərˈstænd ðə tɜːrmz ˈklɪrli. hwer duː aɪ saɪn ðə ˈpeɪpər/", voice: "client",
+              qType: "Wh-", qText: "What does the client want to sign?", qAns: "The paper (or the contract).", qIpa: "/ðə ˈpeɪpər/" },
             { type: 'full-script', title: "Conversation 2: Script", script: dialogue2 },
-            
-            // Slide 26
-            { type: 'speaking', title: "Speaking Activity", icon: "user-clock", text: "How do you help a tired client? What do you say to them?" },
+            { type: 'speaking', title: "Speaking Activity", icon: "microphone-alt", text: "How do you explain the non-refundable cancellation policy to clients at Xoai Wedding so they don't get angry?" },
 
-            // Slide 27
-            { type: 'prediction', title: "Part 3: Monologue - Prediction", desc: "What do you think the manager will talk about?", images: [
-                "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
-                "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=400&q=80",
-                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80"
+            // PART 4
+            { type: 'prediction', title: "Part 4: Planner's Monologue (B1)", desc: "What else should you clarify in a contract?", images: [
+                "https://images.unsplash.com/photo-1550592704-6c76defa99ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
             ]},
-            
-            // Slide 28
             { type: 'audio-mcq', title: "Listen and Choose", 
               script: monologuePlanner,
-              question: "What is the most important thing before taking a break?", options: ["(A) Drinking coffee", "(B) Caring for the clients", "(C) Sleeping", "(D) Going home"], answer: 1 },
+              question: "What is the main idea of this monologue?", options: ["(A) How to use a camera", "(B) Important clauses in a contract", "(C) Choosing a beautiful beach", "(D) Decorating the studio"], answer: 1 },
             
-            // Slide 29 - 36 (Breakdown Monologue)
+            // PART 4: Breakdown 3 (35% blanks)
             { type: 'breakdown', title: "Monologue Breakdown", num: 1, role: "Planner", 
-              sentence: "Taking a break is very important for our staff.", blankRatio: 0.35,
-              ipa: "/ˈteɪkɪŋ ə breɪk ɪz ˈvɛri ɪmˈpɔːrtənt fɔːr aʊər stæf./", voice: "planner",
-              qType: "Yes/No", qText: "Is taking a break important?", qAns: "Yes, it is very important.", qIpa: "/jɛs, ɪt ɪz ˈvɛri ɪmˈpɔːrtənt./" },
+              sentence: "Explaining a pre-wedding contract clearly is very important for both sides.", blankRatio: 0.35,
+              ipa: "/ɪkˈspleɪnɪŋ ə priː-ˈwedɪŋ ˈkɑːntrækt ˈklɪrli ɪz ˈveri ɪmˈpɔːrtnt fɔːr bəʊθ saɪdz/", voice: "planner",
+              qType: "Yes/No", qText: "Is explaining the contract clearly important?", qAns: "Yes, it is very important.", qIpa: "/jes, ɪt ɪz ˈveri ɪmˈpɔːrtnt/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 2, role: "Planner", 
-              sentence: "When we work all day, we need time to rest.", blankRatio: 0.35,
-              ipa: "/wɛn wiː wɜːrk ɔːl deɪ, wiː niːd taɪm tuː rɛst./", voice: "planner",
-              qType: "Wh-", qText: "What do we need when we work all day?", qAns: "We need time to rest.", qIpa: "/wiː niːd taɪm tuː rɛst./" },
+              sentence: "First, we always list the exact number of edited photos the client will receive.", blankRatio: 0.35,
+              ipa: "/fɜːrst, wiː ˈɔːlweɪz lɪst ði ɪɡˈzækt ˈnʌmbər ʌv ˈedɪtɪd ˈfəʊtəʊz ðə ˈklaɪənt wɪl rɪˈsiːv/", voice: "planner",
+              qType: "Yes/No", qText: "Do they list the exact number of printed albums first?", qAns: "No, they list the exact number of edited photos.", qIpa: "/nəʊ, ðeɪ lɪst ði ɪɡˈzækt ˈnʌmbər ʌv ˈedɪtɪd ˈfəʊtəʊz/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 3, role: "Planner", 
-              sentence: "But we must always care for our clients first.", blankRatio: 0.35,
-              ipa: "/bʌt wiː mʌst ˈɔːlweɪz kɛr fɔːr aʊər ˈklaɪənts fɜːrst./", voice: "planner",
-              qType: "Wh-", qText: "Who must we care for first?", qAns: "Our clients.", qIpa: "/aʊər ˈklaɪənts./" },
+              sentence: "This prevents misunderstandings when we deliver the final wedding album.", blankRatio: 0.35,
+              ipa: "/ðɪs prɪˈvents ˌmɪsʌndərˈstændɪŋz hwen wiː dɪˈlɪvər ðə ˈfaɪnl ˈwedɪŋ ˈælbəm/", voice: "planner",
+              qType: "Yes/No", qText: "Does this prevent misunderstandings?", qAns: "Yes, it does.", qIpa: "/jes, ɪt dʌz/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 4, role: "Planner", 
-              sentence: "Before you take a break, check on your clients.", blankRatio: 0.35,
-              ipa: "/bɪˈfɔːr juː teɪk ə breɪk, tʃɛk ɒn jɔːr ˈklaɪənts./", voice: "planner",
-              qType: "Yes/No", qText: "Should you check on clients after your break?", qAns: "No, check on them before your break.", qIpa: "/nəʊ, tʃɛk ɒn ðɛm bɪˈfɔːr jɔːr breɪk./" },
+              sentence: "Next, we must explain the copyright rules carefully to every couple.", blankRatio: 0.35,
+              ipa: "/nekst, wiː mʌst ɪkˈspleɪn ðə ˈkɑːpiraɪt ruːlz ˈkerfəli tuː ˈevri ˈkʌpl/", voice: "planner",
+              qType: "Yes/No", qText: "Do they skip explaining the copyright rules?", qAns: "No, they explain them carefully.", qIpa: "/nəʊ, ðeɪ ɪkˈspleɪn ðəm ˈkerfəli/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 5, role: "Planner", 
-              sentence: "Ask them if they need water or a chair.", blankRatio: 0.35,
-              ipa: "/æsk ðɛm ɪf ðeɪ niːd ˈwɔːtər ɔːr ə tʃɛr./", voice: "planner",
-              qType: "Wh-", qText: "What should you ask them?", qAns: "If they need water or a chair.", qIpa: "/ɪf ðeɪ niːd ˈwɔːtər ɔːr ə tʃɛr./" },
+              sentence: "Xoai Wedding keeps the right to use the photos for our marketing.", blankRatio: 0.35,
+              ipa: "/swaɪ ˈwedɪŋ kiːps ðə raɪt tuː juːz ðə ˈfəʊtəʊz fɔːr aʊər ˈmɑːrkɪtɪŋ/", voice: "planner",
+              qType: "Wh-", qText: "Why does Xoai Wedding use the photos?", qAns: "For their marketing.", qIpa: "/fɔːr ðer ˈmɑːrkɪtɪŋ/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 6, role: "Planner", 
-              sentence: "Make sure they are happy and comfortable.", blankRatio: 0.35,
-              ipa: "/meɪk ʃʊər ðeɪ ɑːr ˈhæpi ænd ˈkʌmfərtəbəl./", voice: "planner",
-              qType: "Wh-", qText: "How should the clients feel?", qAns: "Happy and comfortable.", qIpa: "/ˈhæpi ænd ˈkʌmfərtəbəl./" },
+              sentence: "However, we always ask for the couple's permission before posting online.", blankRatio: 0.35,
+              ipa: "/haʊˈevər, wiː ˈɔːlweɪz æsk fɔːr ðə ˈkʌplz pərˈmɪʃn bɪˈfɔːr ˈpəʊstɪŋ ˈɑːnlaɪn/", voice: "planner",
+              qType: "Wh-", qText: "What do they ask for before posting online?", qAns: "The couple's permission.", qIpa: "/ðə ˈkʌplz pərˈmɪʃn/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 7, role: "Planner", 
-              sentence: "If the client is okay, you can take your break.", blankRatio: 0.35,
-              ipa: "/ɪf ðə ˈklaɪənt ɪz oʊˈkeɪ, juː kæn teɪk jɔːr breɪk./", voice: "planner",
-              qType: "Yes/No", qText: "Can you take a break if the client is not okay?", qAns: "No, only if the client is okay.", qIpa: "/nəʊ, ˈoʊnli ɪf ðə ˈklaɪənt ɪz oʊˈkeɪ./" },
+              sentence: "If clients want completely private photos, they can purchase full copyright.", blankRatio: 0.35,
+              ipa: "/ɪf ˈklaɪənts wɑːnt kəmˈpliːtli ˈpraɪvət ˈfəʊtəʊz, ðeɪ kæn ˈpɜːrtʃəs fʊl ˈkɑːpiraɪt/", voice: "planner",
+              qType: "Wh-", qText: "What can clients purchase for completely private photos?", qAns: "Full copyright.", qIpa: "/fʊl ˈkɑːpiraɪt/" },
             { type: 'breakdown', title: "Monologue Breakdown", num: 8, role: "Planner", 
-              sentence: "A happy client makes our job much easier.", blankRatio: 0.35,
-              ipa: "/ə ˈhæpi ˈklaɪənt meɪks aʊər dʒɒb mʌtʃ ˈiːziər./", voice: "planner",
-              qType: "Wh-", qText: "What makes our job easier?", qAns: "A happy client.", qIpa: "/ə ˈhæpi ˈklaɪənt./" },
-            
-            // Slide 37
+              sentence: "A detailed contract builds trust and makes the photoshoot day much smoother.", blankRatio: 0.35,
+              ipa: "/ə ˈdiːteɪld ˈkɑːntrækt bɪldz trʌst ænd meɪks ðə ˈfəʊtəʊʃuːt deɪ mʌtʃ ˈsmuːðər/", voice: "planner",
+              qType: "Wh-", qText: "What does a detailed contract build?", qAns: "It builds trust.", qIpa: "/ɪt bɪldz trʌst/" },
             { type: 'full-script', title: "Monologue: Script", script: monologuePlanner },
-            
-            // Slide 38
-            { type: 'speaking', title: "Speaking Activity", icon: "microphone-alt", text: "Why is client care important during a long photoshoot? Tell me your thoughts." },
+            { type: 'speaking', title: "Speaking Activity", icon: "user-clock", text: "Have you ever had a couple upset because you posted their photos online? How do you prevent this?" },
 
-            // Slide 39
-            { type: 'list', title: "Application & Expansion (Part 1)", level: "Level A2", items: [
-                "1. When do you take your break at Xoai Wedding?",
-                "2. What do you ask the client before you take a break?",
-                "3. How do you help a client who feels very tired?",
-                "4. Can you bring a client a glass of water and a chair? How do you ask?",
-                "5. Why do we need to tell the manager before taking a break?"
+            // PART 5
+            { type: 'list', title: "Application & Expansion", level: "Level A2", items: [
+                "1. How do you welcome a client when they come to sign a contract?",
+                "2. What are the three locations usually included in a package?",
+                "3. How do you say there is an extra fee for an outside location?",
+                "4. Can you tell a client about the refund policy simply?",
+                "5. Why is it important to confirm everything before the photoshoot?"
             ]},
-            
-            // Slide 40
-            { type: 'list', title: "Application & Expansion (Part 2)", level: "Level A2", items: [
-                "1. Practice: You want to take a break. Talk to your manager.",
-                "2. Practice: You see a client standing for a long time. Offer them a chair.",
-                "3. Practice: The client says they are thirsty. What do you do?",
-                "4. What makes a client feel happy and comfortable?",
-                "5. Talk about a time you helped a client at work."
+            { type: 'list', title: "Application & Expansion", level: "Level B1", items: [
+                "1. Roleplay: Explain to a client why they cannot get their deposit back if they cancel 24 hours before the shoot.",
+                "2. What do you do if a client refuses to let you use their photos for marketing?",
+                "3. How do you negotiate with a client who wants more edited photos than the contract states?",
+                "4. Explain the copyright rules in your own words to a difficult client.",
+                "5. Tell me about a time a clear contract saved your team from a big problem."
             ]}
         ];
 
@@ -404,7 +377,7 @@
         let hiddenTargetWords = new Set();
 
         function generateBlankSentence(sentence, ratio) {
-            const targetWords = ['break', 'manager', 'client', 'water', 'care', 'important', 'happy', 'comfortable', 'thirty', 'minute', 'coffee', 'fine', 'dress', 'hot', 'cold', 'kind', 'chair', 'rest', 'easier', 'leaving'];
+            const targetWords = ['sign', 'contract', 'prewedding', 'photoshoot', 'questions', 'locations', 'package', 'beach', 'outside', 'extra', 'fee', 'travel', 'fifty', 'dollars', 'agree', 'cancellation', 'policy', 'rains', 'heavily', 'weather', 'reschedule', 'relief', 'cancel', 'completely', 'refund', 'percent', 'deposit', 'lose', 'cancellations', 'strictly', 'nonrefundable', 'understand', 'terms', 'clearly', 'paper', 'explaining', 'important', 'exact', 'edited', 'receive', 'prevents', 'misunderstandings', 'deliver', 'final', 'album', 'explain', 'copyright', 'rules', 'carefully', 'marketing', 'permission', 'posting', 'online', 'private', 'purchase', 'detailed', 'builds', 'trust', 'smoother'];
             const words = sentence.split(' ');
             const numToHide = Math.max(1, Math.round(words.length * ratio));
             
@@ -434,7 +407,7 @@
             
             words.forEach((w, index) => {
                 if (hideIndices.includes(index) && wordData[index].length > 0) {
-                    const match = w.match(/^([^a-zA-Z]*)([a-zA-Z\-]+)([^a-zA-Z]*)$/);
+                    const match = w.match(/^([^a-zA-Z]*)([a-zA-Z\-\']+)([^a-zA-Z]*)$/);
                     if (match) {
                         const prefix = match[1];
                         const word = match[2];
@@ -453,13 +426,13 @@
             hiddenTargetWords.clear();
             let html = '';
             slidesData.forEach((slide, index) => {
-                html += `<div class="slide-panel w-full h-full p-4 md:p-12 flex-col justify-center overflow-y-auto relative bg-white" id="slide-${index}">`;
+                html += `<div class="slide-panel w-full h-full p-8 md:p-12 flex-col justify-center relative bg-white" id="slide-${index}">`;
                 
                 if (slide.type === 'title') {
                     html += `
                         <div class="text-center">
                             <div class="w-24 h-24 bg-${slide.color}-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                                <i class="fas fa-mug-hot text-4xl text-${slide.color}-500"></i>
+                                <i class="fas fa-file-contract text-4xl text-${slide.color}-500"></i>
                             </div>
                             <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">${slide.title}</h1>
                             <p class="text-xl text-gray-500">${slide.subtitle}</p>
@@ -468,10 +441,10 @@
                 } 
                 else if (slide.type === 'list') {
                     html += `
-                        <h2 class="text-3xl font-bold text-blue-600 mb-2">${slide.title}</h2>
-                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-8 uppercase font-bold tracking-wider">${slide.level}</span>
+                        <h2 class="text-3xl font-bold text-teal-600 mb-2">${slide.title}</h2>
+                        <span class="inline-block bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded mb-8 uppercase font-bold tracking-wider">${slide.level}</span>
                         <ul class="space-y-6 text-lg text-gray-700">
-                            ${slide.items.map(item => `<li class="flex items-start gap-4"><i class="fas fa-star text-amber-400 mt-1"></i> <span>${item}</span></li>`).join('')}
+                            ${slide.items.map(item => `<li class="flex items-start gap-4"><i class="fas fa-leaf text-teal-400 mt-1"></i> <span>${item}</span></li>`).join('')}
                         </ul>
                     `;
                 }
@@ -479,7 +452,7 @@
                     html += `
                         <h2 class="text-3xl font-bold text-rose-500 mb-4">${slide.title}</h2>
                         <p class="text-lg text-gray-600 mb-8">${slide.desc}</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-4xl mx-auto">
+                        <div class="grid grid-cols-3 gap-6 w-full max-w-4xl mx-auto">
                             ${slide.images.map(img => `
                                 <div class="aspect-square rounded-2xl overflow-hidden shadow-md border-4 border-rose-50">
                                     <img src="${img}" class="w-full h-full object-cover" alt="Prediction image" loading="lazy">
@@ -491,17 +464,17 @@
                 else if (slide.type === 'audio-mcq') {
                     html += `
                         <div class="flex justify-between items-center mb-8">
-                            <h2 class="text-3xl font-bold text-blue-600">${slide.title}</h2>
+                            <h2 class="text-3xl font-bold text-teal-600">${slide.title}</h2>
                             <button class="bg-rose-500 hover:bg-rose-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 tts-dialogue-btn" 
                                     data-slide-index="${index}">
                                 <i class="fas fa-play text-xl ml-1"></i>
                             </button>
                         </div>
-                        <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                        <div class="bg-teal-50 p-6 rounded-xl border border-teal-100">
                             <p class="text-xl font-semibold text-gray-800 mb-6">${slide.question}</p>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mcq-container">
                                 ${slide.options.map((opt, i) => `
-                                    <button class="mcq-btn text-left p-4 rounded-lg border-2 border-gray-200 hover:border-blue-400 bg-white transition-all flex items-center justify-between" 
+                                    <button class="mcq-btn text-left p-4 rounded-lg border-2 border-gray-200 hover:border-teal-400 bg-white transition-all flex items-center justify-between" 
                                             data-correct="${i === slide.answer}">
                                         <span class="text-lg">${opt}</span>
                                         <i class="fas fa-circle text-gray-300 status-icon"></i>
@@ -514,8 +487,8 @@
                 else if (slide.type === 'breakdown') {
                     const roleColor = slide.role === 'Staff' ? 'teal' : (slide.role === 'Planner' ? 'indigo' : 'rose');
                     html += `
-                        <div class="absolute top-4 left-4 md:top-8 md:left-8 text-xs md:text-sm font-bold text-gray-400">Sentence ${slide.num}</div>
-                        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-8 border-b pb-2 md:pb-4 mt-6 md:mt-0">${slide.title}</h2>
+                        <div class="absolute top-8 left-8 text-sm font-bold text-gray-400">Sentence ${slide.num}</div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-8 border-b pb-4">${slide.title}</h2>
                         
                         <div class="mb-10 p-6 bg-${roleColor}-50 rounded-xl border border-${roleColor}-100 relative">
                             <span class="absolute -top-3 left-6 bg-${roleColor}-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm uppercase">${slide.role}</span>
@@ -524,7 +497,7 @@
                                 ${generateBlankSentence(slide.sentence, slide.blankRatio)}
                             </div>
                             
-                            <div class="flex flex-wrap gap-2 md:gap-3 no-print mt-2">
+                            <div class="flex gap-3 no-print mt-2">
                                 <button class="toggle-btn bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 flex items-center gap-2">
                                     <i class="fas fa-eye"></i> Show Text & IPA
                                 </button>
@@ -556,8 +529,8 @@
                             </div>
                             <div class="hidden-content hidden mt-3 bg-white p-3 rounded border border-gray-100">
                                 <div class="flex items-center gap-3">
-                                    <p class="text-blue-600 font-bold flex-grow">${slide.qAns}</p>
-                                    <button class="tts-btn text-gray-400 hover:text-blue-500 transition-colors" data-text="${escapeHTML(slide.qAns)}" data-voice="${slide.voice}">
+                                    <p class="text-teal-600 font-bold flex-grow">${slide.qAns}</p>
+                                    <button class="tts-btn text-gray-400 hover:text-teal-500 transition-colors" data-text="${escapeHTML(slide.qAns)}" data-voice="${slide.voice}">
                                         <i class="fas fa-volume-up"></i>
                                     </button>
                                 </div>
@@ -580,7 +553,7 @@
                                 ${slide.script.map(line => {
                                     const c = line.r === 'Staff' ? 'text-teal-600' : (line.r === 'Planner' ? 'text-indigo-600' : 'text-rose-500');
                                     return `<div class="flex gap-4">
-                                        <span class="font-bold w-20 shrink-0 ${c}">${line.r}:</span>
+                                        <span class="font-bold w-16 shrink-0 ${c}">${line.r}:</span>
                                         <span class="text-gray-700">${line.t}</span>
                                     </div>`;
                                 }).join('')}
@@ -659,14 +632,14 @@
 
                     inputs.forEach(input => {
                         const correctAns = input.dataset.answer.toLowerCase();
-                        const userVal = input.value.trim().toLowerCase();
+                        const userAns = input.value.trim().toLowerCase();
                         
-                        if (userVal === correctAns) {
-                            input.classList.remove('text-red-500', 'border-red-300', 'text-teal-600');
-                            input.classList.add('text-green-600', 'border-green-300');
+                        if (userAns === correctAns) {
+                            input.classList.add('border-green-500', 'text-green-600');
+                            input.classList.remove('border-red-500', 'text-red-600', 'border-gray-300', 'text-teal-600');
                         } else {
-                            input.classList.remove('text-green-600', 'border-green-300', 'text-teal-600');
-                            input.classList.add('text-red-500', 'border-red-300');
+                            input.classList.add('border-red-500', 'text-red-600');
+                            input.classList.remove('border-green-500', 'text-green-600', 'border-gray-300', 'text-teal-600');
                             allCorrect = false;
                         }
                     });
@@ -754,13 +727,19 @@
 
             const enVoices = availableVoices.filter(v => v.lang.startsWith('en-'));
             
-            const displayList = enVoices;
+            const strictVoices = enVoices.filter(v => 
+                v.name.includes('Emma') || 
+                v.name.includes('Jenny') || 
+                v.name.includes('Andrew') || 
+                v.name.includes('Brian')
+            );
+            
+            const displayList = strictVoices.length > 0 ? strictVoices : enVoices;
 
             const configs = [
-                { id: 'voice-staff', priorities: ['Emma', 'Jenny', 'Samantha', 'Nicky', 'Moira', 'Google US English', 'Female'] },
-                { id: 'voice-manager', priorities: ['Andrew', 'Guy', 'Brian', 'Alex', 'Daniel', 'Aaron', 'Google UK English Male', 'Male'] },
-                { id: 'voice-client', priorities: ['Jenny', 'Emma', 'Karen', 'Tessa', 'Catherine', 'Martha', 'Google UK English Female', 'Female'] },
-                { id: 'voice-planner', priorities: ['Brian Natural', 'Brian', 'Andrew', 'Arthur', 'Gordon', 'Fred', 'Male'] }
+                { id: 'voice-staff', priorities: ['Emma', 'Jenny', 'Female'] },
+                { id: 'voice-client', priorities: ['Jenny', 'Emma', 'Female'] },
+                { id: 'voice-planner', priorities: ['Brian Natural', 'Brian', 'Andrew', 'Male'] }
             ];
             
             configs.forEach(config => {
@@ -823,65 +802,58 @@
         }
 
         function playTTS(text, role) {
-            cancelAudioSafe();
-            if (text === '') return;
+            cancelAudioSafe(); 
             
             setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = getVoiceForRole(role);
-                if (voice) utterance.voice = voice;
-                utterance.rate = 0.8; // Set voice rate to 0.8 as requested
-                
-                window.speechUtterances.push(utterance);
-                
-                utterance.onend = function() {
-                    const index = window.speechUtterances.indexOf(utterance);
-                    if (index > -1) {
-                        window.speechUtterances.splice(index, 1);
-                    }
-                };
-                
-                synth.speak(utterance);
-            }, 50);
+                if (text && text.trim() !== '') {
+                    // Xóa các ký tự thoát '\' thừa nếu có để đọc cho mượt
+                    const cleanText = text.replace(/\\\\/g, '').replace(/'/g, "'");
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    window.speechUtterances.push(utterance); 
+                    
+                    const selectedVoice = getVoiceForRole(role);
+                    if (selectedVoice) utterance.voice = selectedVoice;
+                    
+                    utterance.rate = 0.9; 
+                    synth.speak(utterance);
+                }
+            }, 50); 
         }
 
         function playDialogueSequence() {
-            if (dialogueIndex >= currentDialogue.length) {
-                currentDialogue = [];
-                return; 
-            }
+            if (dialogueIndex >= currentDialogue.length) return;
             
             const line = currentDialogue[dialogueIndex];
-            const utterance = new SpeechSynthesisUtterance(line.t);
-            const voice = getVoiceForRole(line.r);
-            if (voice) utterance.voice = voice;
-            utterance.rate = 0.8; // Set voice rate to 0.8 as requested
-            
+            // Xóa ký tự thoát '\' để đọc cho chuẩn
+            const cleanText = line.t.replace(/\\\\/g, '').replace(/'/g, "'");
+            const utterance = new SpeechSynthesisUtterance(cleanText);
             window.speechUtterances.push(utterance);
-
-            utterance.onend = function() {
-                const index = window.speechUtterances.indexOf(utterance);
-                if (index > -1) {
-                    window.speechUtterances.splice(index, 1);
-                }
+            
+            const selectedVoice = getVoiceForRole(line.r);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+                utterance.lang = selectedVoice.lang;
+            }
+            
+            utterance.rate = 0.9;
+            utterance.onend = () => {
                 dialogueIndex++;
-                playDialogueSequence(); 
+                setTimeout(playDialogueSequence, 300);
+            };
+            utterance.onerror = (e) => {
+                console.warn("Speech playback error or canceled", e);
+                if (e.error !== 'canceled' && e.error !== 'interrupted') {
+                    dialogueIndex++;
+                    setTimeout(playDialogueSequence, 300);
+                }
             };
             
-            utterance.onerror = function(e) {
-                console.error("SpeechSynthesisUtterance.onerror", e);
-                dialogueIndex++;
-                playDialogueSequence(); 
-            };
-
             synth.speak(utterance);
         }
 
-        // --- SETTINGS MODAL ---
         function openSettings() {
             document.getElementById('settings-modal').classList.remove('hidden');
             document.getElementById('settings-modal').classList.add('flex');
-            populateVoiceList();
         }
 
         function closeSettings() {
@@ -889,8 +861,8 @@
             document.getElementById('settings-modal').classList.remove('flex');
         }
 
-        // --- INIT ---
-        window.addEventListener('load', () => {
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
             renderSlides();
             updateNav();
             setTimeout(populateVoiceList, 100);
