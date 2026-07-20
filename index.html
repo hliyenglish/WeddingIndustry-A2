@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taking Breaks & Client Care - Xoai Wedding</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Slide Transition */
+        .slide-panel {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide-panel.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* --- PRINT CSS: FIXING PDF ISSUES --- */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                text-rendering: optimizeLegibility;
+            }
+            #toolbar, .nav-btn, .no-print, button, .settings-modal {
+                display: none !important;
+            }
+            #app-container {
+                height: auto !important;
+                overflow: visible !important;
+                background: white !important;
+            }
+            #slide-container {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+                padding: 0 !important;
+            }
+            .slide-panel {
+                display: flex !important;
+                opacity: 1 !important;
+                position: relative !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 40px !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: white !important;
+            }
+            input[type="text"] {
+                border: none !important;
+                border-bottom: 1px solid black !important;
+                background: transparent !important;
+            }
+            .hidden-content {
+                display: block !important;
+                color: #4a5568 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-blue-50 text-gray-800 h-screen overflow-hidden flex flex-col" id="app-container">
+
+    <!-- Toolbar -->
+    <header id="toolbar" class="bg-white shadow-sm px-6 py-3 flex justify-between items-center z-50 shrink-0 border-b border-blue-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold shadow-sm">
+                XW
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Xoai Wedding</h1>
+                <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider">English Training (Level A2)</p>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="flex items-center gap-2 md:gap-4">
+            <span class="hidden md:inline-block text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                Slide <span id="current-slide-num">1</span> / 40
+            </span>
+            <button onclick="openSettings()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-colors tooltip" title="Voice Settings">
+                <i class="fas fa-cog text-lg"></i>
+            </button>
+            <button onclick="window.print()" class="bg-teal-500 hover:bg-teal-600 text-white px-3 md:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm">
+                <i class="fas fa-file-pdf"></i> <span class="hidden md:inline">Download PDF</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow relative flex justify-center items-center p-4 md:p-8" id="slide-container">
+        
+        <!-- Navigation Buttons -->
+        <button id="prev-btn" onclick="navigate(-1)" class="nav-btn absolute left-2 md:left-10 z-40 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Previous">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="next-btn" onclick="navigate(1)" class="nav-btn absolute right-2 md:right-10 z-40 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white rounded-full shadow-md flex items-center justify-center text-blue-500 text-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Next">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div id="slides-wrapper" class="w-full h-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden relative border-4 border-white">
+            <!-- Dynamic Content -->
+        </div>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="settings-modal fixed inset-0 bg-black/50 hidden items-center justify-center z-[100]">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-[450px] max-w-[90%]">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-volume-up text-teal-500 mr-2"></i> Voice Settings</h2>
+                <button onclick="closeSettings()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-sm text-gray-600 mb-2">Select AI voices available on your device. Voice speed is set to 0.8x for A2 learners.</p>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Staff Voice</label>
+                    <select id="voice-staff" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Manager Voice</label>
+                    <select id="voice-manager" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Client Voice</label>
+                    <select id="voice-client" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Planner Voice</label>
+                    <select id="voice-planner" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"></select>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeSettings()" class="bg-teal-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-600 transition-colors">Save & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        // --- DIALOGUES ARRAYS ---
+        // Avoid single quotes (e.g. don't, I'm) to prevent TTS bugs as requested
+        const dialogue1 = [
+            { r: "Staff", t: "Hi, can I take my break now?" },
+            { r: "Manager", t: "Yes, it is your turn. How long is your break?" },
+            { r: "Staff", t: "I have a thirty minute break." },
+            { r: "Manager", t: "Okay. Please tell the client you are leaving." },
+            { r: "Staff", t: "I already told them. They are having coffee now." },
+            { r: "Manager", t: "Good job. Did you ask them if they need anything?" },
+            { r: "Staff", t: "Yes, I did. They said they are fine." },
+            { r: "Manager", t: "Great. Have a good break!" }
+        ];
+
+        const dialogue2 = [
+            { r: "Staff", t: "Hello, are you okay with the dress?" },
+            { r: "Client", t: "Yes, it is very beautiful. But I feel a little hot." },
+            { r: "Staff", t: "Do you want some cold water?" },
+            { r: "Client", t: "Yes, please. That would be great." },
+            { r: "Staff", t: "I will get it for you right now." },
+            { r: "Client", t: "Thank you so much. You are very kind." },
+            { r: "Staff", t: "Here is your water. Do you want to sit down?" },
+            { r: "Client", t: "Yes, I will sit down for five minutes." }
+        ];
+
+        const monologuePlanner = [
+            { r: "Planner", t: "Taking a break is very important for our staff." },
+            { r: "Planner", t: "When we work all day, we need time to rest." },
+            { r: "Planner", t: "But we must always care for our clients first." },
+            { r: "Planner", t: "Before you take a break, check on your clients." },
+            { r: "Planner", t: "Ask them if they need water or a chair." },
+            { r: "Planner", t: "Make sure they are happy and comfortable." },
+            { r: "Planner", t: "If the client is okay, you can take your break." },
+            { r: "Planner", t: "A happy client makes our job much easier." }
+        ];
+
+        // --- DATA STRUCTURE ---
+        const slidesData = [
+            // Slide 1
+            { type: 'title', title: "Taking Breaks & Client Care", subtitle: "Level: A2", color: 'blue' },
+            // Slide 2
+            { type: 'list', title: "Warm-up Questions", level: "A2", items: [
+                "1. When do you usually take a break at work?",
+                "2. What do you do when you take a break?",
+                "3. How do you check if a client needs help?"
+            ]},
+            // Slide 3
+            { type: 'prediction', title: "Prediction Activity", desc: "Look at the photos. What are the staff and client doing?", images: [
+                "https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1498837167922-41c46b21c67e?auto=format&fit=crop&w=400&q=80"  
+            ]},
+            // Slide 4
+            { type: 'audio-mcq', title: "Listen and Choose", 
+              script: dialogue1, 
+              question: "What is the staff asking to do?", options: ["(A) To go home", "(B) To take a break", "(C) To drink coffee", "(D) To help a client"], answer: 1 }, 
+            
+            // Slide 5 - 12 (Breakdown dialogue 1)
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 1, role: "Staff", 
+              sentence: "Hi, can I take my break now?", blankRatio: 0.35,
+              ipa: "/haɪ, kæn aɪ teɪk maɪ breɪk naʊ?/", voice: "staff",
+              qType: "Yes/No", qText: "Does the staff want to take a break?", qAns: "Yes, they do.", qIpa: "/jes, ðeɪ duː/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 2, role: "Manager", 
+              sentence: "Yes, it is your turn. How long is your break?", blankRatio: 0.35,
+              ipa: "/jes, ɪt ɪz jɔːr tɜːrn. haʊ lɔːŋ ɪz jɔːr breɪk?/", voice: "manager",
+              qType: "Wh-", qText: "What does the manager ask?", qAns: "How long is your break?", qIpa: "/haʊ lɔːŋ ɪz jɔːr breɪk?/" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 3, role: "Staff", 
+              sentence: "I have a thirty minute break.", blankRatio: 0.35,
+              ipa: "/aɪ hæv ə ˈθɜːrti ˈmɪnɪt breɪk./", voice: "staff",
+              qType: "Yes/No", qText: "Is the break sixty minutes long?", qAns: "No, it is thirty minutes.", qIpa: "/nəʊ, ɪt ɪz ˈθɜːrti ˈmɪnɪts./" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 4, role: "Manager", 
+              sentence: "Okay. Please tell the client you are leaving.", blankRatio: 0.35,
+              ipa: "/oʊˈkeɪ. pliːz tɛl ðə ˈklaɪənt juː ɑːr ˈliːvɪŋ./", voice: "manager",
+              qType: "Wh-", qText: "Who should the staff tell?", qAns: "The client.", qIpa: "/ðə ˈklaɪənt./" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 5, role: "Staff", 
+              sentence: "I already told them. They are having coffee now.", blankRatio: 0.35,
+              ipa: "/aɪ ɔːlˈrɛdi toʊld ðɛm. ðeɪ ɑːr ˈhævɪŋ ˈkɔːfi naʊ./", voice: "staff",
+              qType: "Wh-", qText: "What are the clients doing?", qAns: "They are having coffee.", qIpa: "/ðeɪ ɑːr ˈhævɪŋ ˈkɔːfi./" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 6, role: "Manager", 
+              sentence: "Good job. Did you ask them if they need anything?", blankRatio: 0.35,
+              ipa: "/gʊd dʒɒb. dɪd juː æsk ðɛm ɪf ðeɪ niːd ˈɛniˌθɪŋ?/", voice: "manager",
+              qType: "Yes/No", qText: "Did the manager say bad job?", qAns: "No, the manager said good job.", qIpa: "/nəʊ, ðə ˈmænɪdʒər sɛd gʊd dʒɒb./" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 7, role: "Staff", 
+              sentence: "Yes, I did. They said they are fine.", blankRatio: 0.35,
+              ipa: "/jɛs, aɪ dɪd. ðeɪ sɛd ðeɪ ɑːr faɪn./", voice: "staff",
+              qType: "Wh-", qText: "How are the clients?", qAns: "They are fine.", qIpa: "/ðeɪ ɑːr faɪn./" },
+            { type: 'breakdown', title: "Conversation 1 Breakdown", num: 8, role: "Manager", 
+              sentence: "Great. Have a good break!", blankRatio: 0.35,
+              ipa: "/greɪt. hæv ə gʊd breɪk!/", voice: "manager",
+              qType: "Wh-", qText: "What does the manager wish?", qAns: "Have a good break.", qIpa: "/hæv ə gʊd breɪk./" },
+            
+            // Slide 13
+            { type: 'full-script', title: "Conversation 1: Script", script: dialogue1 },
+            
+            // Slide 14
+            { type: 'speaking', title: "Speaking Activity", icon: "comments", text: "Tell me about a time you took a break at work. What did you do before you left?" },
+
+            // Slide 15
+            { type: 'prediction', title: "Part 2: Conversation 2 - Prediction", desc: "Look at the photos. What does the client need?", images: [
+                "https://images.unsplash.com/photo-1544465544-1b71aee9dfa3?auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?auto=format&fit=crop&w=400&q=80", 
+                "https://images.unsplash.com/photo-1555529902-5261145633bf?auto=format&fit=crop&w=400&q=80"  
+            ]},
+            
+            // Slide 16
+            { type: 'audio-mcq', title: "Listen and Choose", 
+              script: dialogue2,
+              question: "What does the staff offer to the client?", options: ["(A) A new dress", "(B) Some cold water", "(C) A hot coffee", "(D) A new location"], answer: 1 },
+            
+            // Slide 17 - 24 (Breakdown dialogue 2)
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 1, role: "Staff", 
+              sentence: "Hello, are you okay with the dress?", blankRatio: 0.35,
+              ipa: "/hɛˈloʊ, ɑːr juː oʊˈkeɪ wɪð ðə drɛs?/", voice: "staff",
+              qType: "Yes/No", qText: "Is the staff asking about the shoes?", qAns: "No, they are asking about the dress.", qIpa: "/nəʊ, ðeɪ ɑːr ˈæskɪŋ əˈbaʊt ðə drɛs./" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 2, role: "Client", 
+              sentence: "Yes, it is very beautiful. But I feel a little hot.", blankRatio: 0.35,
+              ipa: "/jɛs, ɪt ɪz ˈvɛri ˈbjuːtəfəl. bʌt aɪ fiːl ə ˈlɪtəl hɒt./", voice: "client",
+              qType: "Wh-", qText: "How does the client feel?", qAns: "The client feels a little hot.", qIpa: "/ðə ˈklaɪənt fiːlz ə ˈlɪtəl hɒt./" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 3, role: "Staff", 
+              sentence: "Do you want some cold water?", blankRatio: 0.35,
+              ipa: "/duː juː wɒnt sʌm koʊld ˈwɔːtər?/", voice: "staff",
+              qType: "Yes/No", qText: "Does the staff offer warm water?", qAns: "No, the staff offers cold water.", qIpa: "/nəʊ, ðə stæf ˈɔfərz koʊld ˈwɔːtər./" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 4, role: "Client", 
+              sentence: "Yes, please. That would be great.", blankRatio: 0.35,
+              ipa: "/jɛs, pliːz. ðæt wʊd bi greɪt./", voice: "client",
+              qType: "Yes/No", qText: "Does the client say no?", qAns: "No, the client says yes.", qIpa: "/nəʊ, ðə ˈklaɪənt sɛz jɛs./" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 5, role: "Staff", 
+              sentence: "I will get it for you right now.", blankRatio: 0.35,
+              ipa: "/aɪ wɪl gɛt ɪt fɔːr juː raɪt naʊ./", voice: "staff",
+              qType: "Wh-", qText: "When will the staff get it?", qAns: "Right now.", qIpa: "/raɪt naʊ./" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 6, role: "Client", 
+              sentence: "Thank you so much. You are very kind.", blankRatio: 0.35,
+              ipa: "/θæŋk juː soʊ mʌtʃ. juː ɑːr ˈvɛri kaɪnd./", voice: "client",
+              qType: "Wh-", qText: "What does the client say?", qAns: "Thank you so much.", qIpa: "/θæŋk juː soʊ mʌtʃ./" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 7, role: "Staff", 
+              sentence: "Here is your water. Do you want to sit down?", blankRatio: 0.35,
+              ipa: "/hɪər ɪz jɔːr ˈwɔːtər. duː juː wɒnt tuː sɪt daʊn?/", voice: "staff",
+              qType: "Wh-", qText: "What does the staff ask?", qAns: "Do you want to sit down?", qIpa: "/duː juː wɒnt tuː sɪt daʊn?/" },
+            { type: 'breakdown', title: "Conversation 2 Breakdown", num: 8, role: "Client", 
+              sentence: "Yes, I will sit down for five minutes.", blankRatio: 0.35,
+              ipa: "/jɛs, aɪ wɪl sɪt daʊn fɔːr faɪv ˈmɪnɪts./", voice: "client",
+              qType: "Wh-", qText: "How long will the client sit down?", qAns: "For five minutes.", qIpa: "/fɔːr faɪv ˈmɪnɪts./" },
+            
+            // Slide 25
+            { type: 'full-script', title: "Conversation 2: Script", script: dialogue2 },
+            
+            // Slide 26
+            { type: 'speaking', title: "Speaking Activity", icon: "user-clock", text: "How do you help a tired client? What do you say to them?" },
+
+            // Slide 27
+            { type: 'prediction', title: "Part 3: Monologue - Prediction", desc: "What do you think the manager will talk about?", images: [
+                "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+                "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=400&q=80",
+                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80"
+            ]},
+            
+            // Slide 28
+            { type: 'audio-mcq', title: "Listen and Choose", 
+              script: monologuePlanner,
+              question: "What is the most important thing before taking a break?", options: ["(A) Drinking coffee", "(B) Caring for the clients", "(C) Sleeping", "(D) Going home"], answer: 1 },
+            
+            // Slide 29 - 36 (Breakdown Monologue)
+            { type: 'breakdown', title: "Monologue Breakdown", num: 1, role: "Planner", 
+              sentence: "Taking a break is very important for our staff.", blankRatio: 0.35,
+              ipa: "/ˈteɪkɪŋ ə breɪk ɪz ˈvɛri ɪmˈpɔːrtənt fɔːr aʊər stæf./", voice: "planner",
+              qType: "Yes/No", qText: "Is taking a break important?", qAns: "Yes, it is very important.", qIpa: "/jɛs, ɪt ɪz ˈvɛri ɪmˈpɔːrtənt./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 2, role: "Planner", 
+              sentence: "When we work all day, we need time to rest.", blankRatio: 0.35,
+              ipa: "/wɛn wiː wɜːrk ɔːl deɪ, wiː niːd taɪm tuː rɛst./", voice: "planner",
+              qType: "Wh-", qText: "What do we need when we work all day?", qAns: "We need time to rest.", qIpa: "/wiː niːd taɪm tuː rɛst./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 3, role: "Planner", 
+              sentence: "But we must always care for our clients first.", blankRatio: 0.35,
+              ipa: "/bʌt wiː mʌst ˈɔːlweɪz kɛr fɔːr aʊər ˈklaɪənts fɜːrst./", voice: "planner",
+              qType: "Wh-", qText: "Who must we care for first?", qAns: "Our clients.", qIpa: "/aʊər ˈklaɪənts./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 4, role: "Planner", 
+              sentence: "Before you take a break, check on your clients.", blankRatio: 0.35,
+              ipa: "/bɪˈfɔːr juː teɪk ə breɪk, tʃɛk ɒn jɔːr ˈklaɪənts./", voice: "planner",
+              qType: "Yes/No", qText: "Should you check on clients after your break?", qAns: "No, check on them before your break.", qIpa: "/nəʊ, tʃɛk ɒn ðɛm bɪˈfɔːr jɔːr breɪk./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 5, role: "Planner", 
+              sentence: "Ask them if they need water or a chair.", blankRatio: 0.35,
+              ipa: "/æsk ðɛm ɪf ðeɪ niːd ˈwɔːtər ɔːr ə tʃɛr./", voice: "planner",
+              qType: "Wh-", qText: "What should you ask them?", qAns: "If they need water or a chair.", qIpa: "/ɪf ðeɪ niːd ˈwɔːtər ɔːr ə tʃɛr./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 6, role: "Planner", 
+              sentence: "Make sure they are happy and comfortable.", blankRatio: 0.35,
+              ipa: "/meɪk ʃʊər ðeɪ ɑːr ˈhæpi ænd ˈkʌmfərtəbəl./", voice: "planner",
+              qType: "Wh-", qText: "How should the clients feel?", qAns: "Happy and comfortable.", qIpa: "/ˈhæpi ænd ˈkʌmfərtəbəl./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 7, role: "Planner", 
+              sentence: "If the client is okay, you can take your break.", blankRatio: 0.35,
+              ipa: "/ɪf ðə ˈklaɪənt ɪz oʊˈkeɪ, juː kæn teɪk jɔːr breɪk./", voice: "planner",
+              qType: "Yes/No", qText: "Can you take a break if the client is not okay?", qAns: "No, only if the client is okay.", qIpa: "/nəʊ, ˈoʊnli ɪf ðə ˈklaɪənt ɪz oʊˈkeɪ./" },
+            { type: 'breakdown', title: "Monologue Breakdown", num: 8, role: "Planner", 
+              sentence: "A happy client makes our job much easier.", blankRatio: 0.35,
+              ipa: "/ə ˈhæpi ˈklaɪənt meɪks aʊər dʒɒb mʌtʃ ˈiːziər./", voice: "planner",
+              qType: "Wh-", qText: "What makes our job easier?", qAns: "A happy client.", qIpa: "/ə ˈhæpi ˈklaɪənt./" },
+            
+            // Slide 37
+            { type: 'full-script', title: "Monologue: Script", script: monologuePlanner },
+            
+            // Slide 38
+            { type: 'speaking', title: "Speaking Activity", icon: "microphone-alt", text: "Why is client care important during a long photoshoot? Tell me your thoughts." },
+
+            // Slide 39
+            { type: 'list', title: "Application & Expansion (Part 1)", level: "Level A2", items: [
+                "1. When do you take your break at Xoai Wedding?",
+                "2. What do you ask the client before you take a break?",
+                "3. How do you help a client who feels very tired?",
+                "4. Can you bring a client a glass of water and a chair? How do you ask?",
+                "5. Why do we need to tell the manager before taking a break?"
+            ]},
+            
+            // Slide 40
+            { type: 'list', title: "Application & Expansion (Part 2)", level: "Level A2", items: [
+                "1. Practice: You want to take a break. Talk to your manager.",
+                "2. Practice: You see a client standing for a long time. Offer them a chair.",
+                "3. Practice: The client says they are thirsty. What do you do?",
+                "4. What makes a client feel happy and comfortable?",
+                "5. Talk about a time you helped a client at work."
+            ]}
+        ];
+
+        // --- RENDER LOGIC ---
+        const container = document.getElementById('slides-wrapper');
+        
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        let hiddenTargetWords = new Set();
+
+        function generateBlankSentence(sentence, ratio) {
+            const targetWords = ['break', 'manager', 'client', 'water', 'care', 'important', 'happy', 'comfortable', 'thirty', 'minute', 'coffee', 'fine', 'dress', 'hot', 'cold', 'kind', 'chair', 'rest', 'easier', 'leaving'];
+            const words = sentence.split(' ');
+            const numToHide = Math.max(1, Math.round(words.length * ratio));
+            
+            const wordData = words.map((w, i) => {
+                const cleanWord = w.replace(/[^a-zA-Z]/g, '');
+                return { index: i, original: w, clean: cleanWord, length: cleanWord.length };
+            });
+            
+            const sortedByLen = [...wordData].sort((a, b) => {
+                const aClean = a.clean.toLowerCase();
+                const bClean = b.clean.toLowerCase();
+                const aIsTarget = (targetWords.includes(aClean) && !hiddenTargetWords.has(aClean)) ? 1 : 0;
+                const bIsTarget = (targetWords.includes(bClean) && !hiddenTargetWords.has(bClean)) ? 1 : 0;
+                if (aIsTarget !== bIsTarget) return bIsTarget - aIsTarget;
+                return b.length - a.length;
+            });
+            const hideIndices = sortedByLen.slice(0, numToHide).map(w => w.index);
+            
+            hideIndices.forEach(idx => {
+                const cleanWord = wordData[idx].clean.toLowerCase();
+                if (targetWords.includes(cleanWord)) {
+                    hiddenTargetWords.add(cleanWord);
+                }
+            });
+            
+            let html = '<div class="flex flex-wrap items-center gap-x-2 gap-y-4 leading-loose text-xl font-medium text-gray-800 w-full">';
+            
+            words.forEach((w, index) => {
+                if (hideIndices.includes(index) && wordData[index].length > 0) {
+                    const match = w.match(/^([^a-zA-Z]*)([a-zA-Z\-]+)([^a-zA-Z]*)$/);
+                    if (match) {
+                        const prefix = match[1];
+                        const word = match[2];
+                        const suffix = match[3];
+                        const wPx = Math.max(40, word.length * 15 + 10); 
+                        html += `<span class="inline-flex items-center">${prefix}<input type="text" class="dictation-input border-b-2 border-gray-300 focus:border-teal-500 bg-transparent text-center text-teal-600 font-bold outline-none px-1" style="width: ${wPx}px;" data-answer="${escapeHTML(word.toLowerCase())}">${suffix}</span>`;
+                    } else { html += `<span>${w}</span>`; }
+                } else { html += `<span>${w}</span>`; }
+            });
+
+            html += `<button class="check-btn ml-2 shrink-0 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors tooltip" title="Check All"><i class="fas fa-check"></i></button></div>`;
+            return html;
+        }
+
+        function renderSlides() {
+            hiddenTargetWords.clear();
+            let html = '';
+            slidesData.forEach((slide, index) => {
+                html += `<div class="slide-panel w-full h-full p-4 md:p-12 flex-col justify-center overflow-y-auto relative bg-white" id="slide-${index}">`;
+                
+                if (slide.type === 'title') {
+                    html += `
+                        <div class="text-center">
+                            <div class="w-24 h-24 bg-${slide.color}-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                                <i class="fas fa-mug-hot text-4xl text-${slide.color}-500"></i>
+                            </div>
+                            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">${slide.title}</h1>
+                            <p class="text-xl text-gray-500">${slide.subtitle}</p>
+                        </div>
+                    `;
+                } 
+                else if (slide.type === 'list') {
+                    html += `
+                        <h2 class="text-3xl font-bold text-blue-600 mb-2">${slide.title}</h2>
+                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-8 uppercase font-bold tracking-wider">${slide.level}</span>
+                        <ul class="space-y-6 text-lg text-gray-700">
+                            ${slide.items.map(item => `<li class="flex items-start gap-4"><i class="fas fa-star text-amber-400 mt-1"></i> <span>${item}</span></li>`).join('')}
+                        </ul>
+                    `;
+                }
+                else if (slide.type === 'prediction') {
+                    html += `
+                        <h2 class="text-3xl font-bold text-rose-500 mb-4">${slide.title}</h2>
+                        <p class="text-lg text-gray-600 mb-8">${slide.desc}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-4xl mx-auto">
+                            ${slide.images.map(img => `
+                                <div class="aspect-square rounded-2xl overflow-hidden shadow-md border-4 border-rose-50">
+                                    <img src="${img}" class="w-full h-full object-cover" alt="Prediction image" loading="lazy">
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                else if (slide.type === 'audio-mcq') {
+                    html += `
+                        <div class="flex justify-between items-center mb-8">
+                            <h2 class="text-3xl font-bold text-blue-600">${slide.title}</h2>
+                            <button class="bg-rose-500 hover:bg-rose-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 tts-dialogue-btn" 
+                                    data-slide-index="${index}">
+                                <i class="fas fa-play text-xl ml-1"></i>
+                            </button>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                            <p class="text-xl font-semibold text-gray-800 mb-6">${slide.question}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mcq-container">
+                                ${slide.options.map((opt, i) => `
+                                    <button class="mcq-btn text-left p-4 rounded-lg border-2 border-gray-200 hover:border-blue-400 bg-white transition-all flex items-center justify-between" 
+                                            data-correct="${i === slide.answer}">
+                                        <span class="text-lg">${opt}</span>
+                                        <i class="fas fa-circle text-gray-300 status-icon"></i>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                else if (slide.type === 'breakdown') {
+                    const roleColor = slide.role === 'Staff' ? 'teal' : (slide.role === 'Planner' ? 'indigo' : 'rose');
+                    html += `
+                        <div class="absolute top-4 left-4 md:top-8 md:left-8 text-xs md:text-sm font-bold text-gray-400">Sentence ${slide.num}</div>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-8 border-b pb-2 md:pb-4 mt-6 md:mt-0">${slide.title}</h2>
+                        
+                        <div class="mb-10 p-6 bg-${roleColor}-50 rounded-xl border border-${roleColor}-100 relative">
+                            <span class="absolute -top-3 left-6 bg-${roleColor}-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm uppercase">${slide.role}</span>
+                            
+                            <div class="mt-4 mb-6 flex flex-col gap-4 w-full">
+                                ${generateBlankSentence(slide.sentence, slide.blankRatio)}
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-2 md:gap-3 no-print mt-2">
+                                <button class="toggle-btn bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 flex items-center gap-2">
+                                    <i class="fas fa-eye"></i> Show Text & IPA
+                                </button>
+                                <button class="tts-btn bg-${roleColor}-100 text-${roleColor}-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-${roleColor}-200 flex items-center gap-2"
+                                        data-text="${escapeHTML(slide.sentence)}" data-voice="${slide.voice}">
+                                    <i class="fas fa-volume-up"></i> Listen
+                                </button>
+                                <button class="bg-gray-800 text-white w-10 h-10 rounded-lg flex items-center justify-center hover:bg-red-500 transition-colors tooltip" title="Record (Mock)">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="hidden-content hidden mt-6 p-4 bg-white rounded-lg border border-gray-100 shadow-inner">
+                                <p class="text-gray-800 font-medium mb-1">${slide.sentence}</p>
+                                <p class="text-gray-500 font-mono text-sm">${slide.ipa}</p>
+                            </div>
+                        </div>
+
+                        <!-- Comprehension Question -->
+                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-gray-700 text-white text-xs px-2 py-1 rounded font-bold">${slide.qType} Q</span>
+                                <p class="font-semibold text-gray-800">${slide.qText}</p>
+                            </div>
+                            <div class="flex items-center gap-3 no-print">
+                                <button class="toggle-btn bg-white border border-gray-300 text-gray-600 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 flex items-center gap-2">
+                                    <i class="fas fa-eye"></i> Answer
+                                </button>
+                            </div>
+                            <div class="hidden-content hidden mt-3 bg-white p-3 rounded border border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <p class="text-blue-600 font-bold flex-grow">${slide.qAns}</p>
+                                    <button class="tts-btn text-gray-400 hover:text-blue-500 transition-colors" data-text="${escapeHTML(slide.qAns)}" data-voice="${slide.voice}">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                </div>
+                                <p class="text-gray-400 font-mono text-xs mt-1">${slide.qIpa}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                else if (slide.type === 'full-script') {
+                    html += `
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">${slide.title}</h2>
+                            <button class="bg-teal-500 hover:bg-teal-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 tts-dialogue-btn"
+                                    data-slide-index="${index}">
+                                <i class="fas fa-play ml-1"></i>
+                            </button>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-6 h-[60vh] overflow-y-auto custom-scrollbar border border-gray-200">
+                            <div class="space-y-4">
+                                ${slide.script.map(line => {
+                                    const c = line.r === 'Staff' ? 'text-teal-600' : (line.r === 'Planner' ? 'text-indigo-600' : 'text-rose-500');
+                                    return `<div class="flex gap-4">
+                                        <span class="font-bold w-20 shrink-0 ${c}">${line.r}:</span>
+                                        <span class="text-gray-700">${line.t}</span>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                else if (slide.type === 'speaking') {
+                    html += `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mb-8 shadow-inner">
+                                <i class="fas fa-${slide.icon} text-5xl text-amber-500"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-6">${slide.title}</h2>
+                            <div class="bg-white p-8 rounded-2xl shadow-lg border border-amber-50 max-w-3xl relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-2 h-full bg-amber-400"></div>
+                                <p class="text-2xl text-gray-700 font-medium leading-relaxed italic">"${slide.text}"</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            });
+            container.innerHTML = html;
+            attachEventListeners();
+        }
+
+        // --- INTERACTIVITY LOGIC ---
+        let currentSlide = 0;
+        const totalSlides = slidesData.length;
+
+        function updateNav() {
+            document.querySelectorAll('.slide-panel').forEach((el, index) => {
+                el.classList.toggle('active', index === currentSlide);
+            });
+            document.getElementById('current-slide-num').innerText = currentSlide + 1;
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function navigate(dir) {
+            cancelAudioSafe(); 
+            currentSlide += dir;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            updateNav();
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.mcq-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const parent = this.closest('.mcq-container');
+                    parent.querySelectorAll('.mcq-btn').forEach(b => {
+                        b.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
+                        b.querySelector('.status-icon').className = 'fas fa-circle text-gray-300 status-icon';
+                    });
+                    
+                    const isCorrect = this.dataset.correct === 'true';
+                    const icon = this.querySelector('.status-icon');
+                    
+                    if (isCorrect) {
+                        this.classList.add('border-green-500', 'bg-green-50');
+                        icon.className = 'fas fa-check-circle text-green-500 status-icon text-xl';
+                    } else {
+                        this.classList.add('border-red-500', 'bg-red-50');
+                        icon.className = 'fas fa-times-circle text-red-500 status-icon text-xl';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.check-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const container = this.parentElement;
+                    const inputs = container.querySelectorAll('.dictation-input');
+                    let allCorrect = true;
+
+                    inputs.forEach(input => {
+                        const correctAns = input.dataset.answer.toLowerCase();
+                        const userVal = input.value.trim().toLowerCase();
+                        
+                        if (userVal === correctAns) {
+                            input.classList.remove('text-red-500', 'border-red-300', 'text-teal-600');
+                            input.classList.add('text-green-600', 'border-green-300');
+                        } else {
+                            input.classList.remove('text-green-600', 'border-green-300', 'text-teal-600');
+                            input.classList.add('text-red-500', 'border-red-300');
+                            allCorrect = false;
+                        }
+                    });
+
+                    const icon = this.querySelector('i');
+                    if (allCorrect && inputs.length > 0) {
+                        this.classList.replace('bg-gray-100', 'bg-green-100');
+                        this.classList.replace('text-gray-500', 'text-green-600');
+                        icon.className = 'fas fa-check';
+                    } else {
+                        this.classList.replace('bg-gray-100', 'bg-red-100');
+                        this.classList.replace('text-gray-500', 'text-red-600');
+                        icon.className = 'fas fa-times';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.dictation-input').forEach(input => {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const container = this.closest('div');
+                        if (container) {
+                            const checkBtn = container.querySelector('.check-btn');
+                            if (checkBtn) checkBtn.click();
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.parentElement.nextElementSibling;
+                    if(target && target.classList.contains('hidden-content')){
+                        target.classList.toggle('hidden');
+                        const icon = this.querySelector('i');
+                        if (target.classList.contains('hidden')) {
+                            icon.classList.replace('fa-eye-slash', 'fa-eye');
+                        } else {
+                            icon.classList.replace('fa-eye', 'fa-eye-slash');
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.tts-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const text = this.getAttribute('data-text');
+                    const voiceRole = this.getAttribute('data-voice');
+                    playTTS(text, voiceRole);
+                });
+            });
+
+            document.querySelectorAll('.tts-dialogue-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    cancelAudioSafe(); 
+                    const index = parseInt(this.getAttribute('data-slide-index'));
+                    if (slidesData[index] && slidesData[index].script) {
+                        currentDialogue = slidesData[index].script;
+                        dialogueIndex = 0;
+                        setTimeout(playDialogueSequence, 50);
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            if (e.key === 'ArrowRight') navigate(1);
+            else if (e.key === 'ArrowLeft') navigate(-1);
+        });
+
+        // --- WEB SPEECH API & TTS LOGIC ---
+        let synth = window.speechSynthesis;
+        let availableVoices = [];
+        
+        let currentDialogue = [];
+        let dialogueIndex = 0;
+        
+        window.speechUtterances = []; 
+
+        function populateVoiceList() {
+            availableVoices = synth.getVoices();
+            if (availableVoices.length === 0) return;
+
+            const enVoices = availableVoices.filter(v => v.lang.startsWith('en-'));
+            
+            const strictVoices = enVoices.filter(v => 
+                v.name.includes('Emma') || 
+                v.name.includes('Jenny') || 
+                v.name.includes('Andrew') || 
+                v.name.includes('Brian')
+            );
+            
+            const displayList = strictVoices.length > 0 ? strictVoices : enVoices;
+
+            const configs = [
+                { id: 'voice-staff', priorities: ['Emma', 'Jenny', 'Female'] },
+                { id: 'voice-manager', priorities: ['Andrew', 'Guy', 'Male', 'Brian'] },
+                { id: 'voice-client', priorities: ['Jenny', 'Emma', 'Female'] },
+                { id: 'voice-planner', priorities: ['Brian Natural', 'Brian', 'Andrew', 'Male'] }
+            ];
+            
+            configs.forEach(config => {
+                const selectEl = document.getElementById(config.id);
+                if (!selectEl) return;
+                
+                const prevValue = selectEl.value; 
+                selectEl.innerHTML = ''; 
+                
+                displayList.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.value = voice.voiceURI;
+                    selectEl.appendChild(option);
+                });
+                
+                let bestMatchIndex = -1;
+                for (let keyword of config.priorities) {
+                    bestMatchIndex = Array.from(selectEl.options).findIndex(opt => opt.textContent.includes(keyword));
+                    if (bestMatchIndex !== -1) {
+                        break;
+                    }
+                }
+                
+                if (bestMatchIndex !== -1) {
+                    selectEl.selectedIndex = bestMatchIndex;
+                } else if (selectEl.options.length > 0) {
+                    selectEl.selectedIndex = 0;
+                }
+
+                if (prevValue && selectEl.querySelector(`option[value="${prevValue}"]`)) {
+                    selectEl.value = prevValue;
+                }
+            });
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
+        function getVoiceForRole(role) {
+            if (!role || availableVoices.length === 0) return null;
+            
+            const selectId = `voice-${role.toLowerCase()}`;
+            const selectEl = document.getElementById(selectId);
+            
+            if (selectEl && selectEl.value) {
+                const voice = availableVoices.find(v => v.voiceURI === selectEl.value);
+                if (voice) return voice;
+            }
+            
+            return availableVoices.find(v => v.lang.startsWith('en-')) || availableVoices[0];
+        }
+
+        function cancelAudioSafe() {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.cancel();
+            currentDialogue = [];
+            window.speechUtterances = [];
+        }
+
+        function playTTS(text, role) {
+            cancelAudioSafe();
+            if (text === '') return;
+            
+            setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = getVoiceForRole(role);
+                if (voice) utterance.voice = voice;
+                utterance.rate = 0.8; // Set voice rate to 0.8 as requested
+                
+                window.speechUtterances.push(utterance);
+                
+                utterance.onend = function() {
+                    const index = window.speechUtterances.indexOf(utterance);
+                    if (index > -1) {
+                        window.speechUtterances.splice(index, 1);
+                    }
+                };
+                
+                synth.speak(utterance);
+            }, 50);
+        }
+
+        function playDialogueSequence() {
+            if (dialogueIndex >= currentDialogue.length) {
+                currentDialogue = [];
+                return; 
+            }
+            
+            const line = currentDialogue[dialogueIndex];
+            const utterance = new SpeechSynthesisUtterance(line.t);
+            const voice = getVoiceForRole(line.r);
+            if (voice) utterance.voice = voice;
+            utterance.rate = 0.8; // Set voice rate to 0.8 as requested
+            
+            window.speechUtterances.push(utterance);
+
+            utterance.onend = function() {
+                const index = window.speechUtterances.indexOf(utterance);
+                if (index > -1) {
+                    window.speechUtterances.splice(index, 1);
+                }
+                dialogueIndex++;
+                playDialogueSequence(); 
+            };
+            
+            utterance.onerror = function(e) {
+                console.error("SpeechSynthesisUtterance.onerror", e);
+                dialogueIndex++;
+                playDialogueSequence(); 
+            };
+
+            synth.speak(utterance);
+        }
+
+        // --- SETTINGS MODAL ---
+        function openSettings() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+            document.getElementById('settings-modal').classList.add('flex');
+            populateVoiceList();
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.add('hidden');
+            document.getElementById('settings-modal').classList.remove('flex');
+        }
+
+        // --- INIT ---
+        window.addEventListener('load', () => {
+            renderSlides();
+            updateNav();
+            setTimeout(populateVoiceList, 100);
+        });
+
+    </script>
+</body>
+</html>
