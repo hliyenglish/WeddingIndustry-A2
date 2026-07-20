@@ -754,13 +754,17 @@
 
             const enVoices = availableVoices.filter(v => v.lang.startsWith('en-'));
             
-            const displayList = enVoices;
+            const cleanVoices = enVoices.filter(v => !v.name.includes('undefined'));
+            const preferredNames = ['Emma', 'Jenny', 'Andrew', 'Brian', 'Ava', 'Evan', 'Samantha', 'Alex', 'Daniel', 'Karen', 'Tessa', 'Arthur', 'Martha', 'Moira', 'Nicky', 'Catherine', 'Gordon', 'Fred', 'Google', 'David', 'Zira', 'Mark'];
+            const strictVoices = cleanVoices.filter(v => preferredNames.some(name => v.name.includes(name)));
+            
+            const displayList = strictVoices.length > 0 ? strictVoices : cleanVoices;
 
             const configs = [
-                { id: 'voice-staff', priorities: ['Ava', 'Emma', 'Jenny', 'Samantha', 'Nicky', 'Moira', 'Google US English', 'Female'] },
-                { id: 'voice-manager', priorities: ['Evan', 'Andrew', 'Guy', 'Brian', 'Alex', 'Daniel', 'Aaron', 'Google UK English Male', 'Male'] },
-                { id: 'voice-client', priorities: ['Ava', 'Jenny', 'Emma', 'Karen', 'Tessa', 'Catherine', 'Martha', 'Google UK English Female', 'Female'] },
-                { id: 'voice-planner', priorities: ['Evan', 'Brian Natural', 'Brian', 'Andrew', 'Arthur', 'Gordon', 'Fred', 'Male'] }
+                { id: 'voice-staff', priorities: ['Emma', 'Ava', 'Jenny', 'Samantha', 'Zira', 'Nicky', 'Moira', 'Google US English', 'Female'] },
+                { id: 'voice-manager', priorities: ['Andrew', 'Evan', 'Guy', 'Brian', 'David', 'Alex', 'Daniel', 'Aaron', 'Google UK English Male', 'Male'] },
+                { id: 'voice-client', priorities: ['Jenny', 'Ava', 'Emma', 'Karen', 'Zira', 'Tessa', 'Catherine', 'Martha', 'Google UK English Female', 'Female'] },
+                { id: 'voice-planner', priorities: ['Brian Natural', 'Brian', 'Evan', 'Mark', 'Andrew', 'Arthur', 'Gordon', 'Fred', 'Male'] }
             ];
             
             configs.forEach(config => {
